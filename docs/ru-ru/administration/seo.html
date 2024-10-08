@@ -1,0 +1,75 @@
+---
+layout: default
+title: "SEO ключевые слова - Документация OpenCart"
+permalink: ru-ru/administration/seo/
+---
+<h1>SEO ключевые слова</h1>
+<h2>SEO ключевые слова</h2>
+<p>OpenCart позволяет использовать оптимизированные для поисковых систем URL-адреса для страниц продуктов, категорий, производителей и информации. SEO ключевые слова определяются для каждого продукта, категории, производителя и страницы информации, хранятся в таблице базы данных (url_alias), запрашиваются при каждом запросе страницы и преобразуются во внутренний URL.</p>
+<p>Для использования SEO ключевых слов они должны быть включены на странице настроек магазина, на вкладке <a href="en-gb/system/setting/server/">сервер</a> в <a href="en-gb/administration/">административном интерфейсе</a>.</p>
+
+<p class="text-center"><img src="image/administration/admin-enable-seo-url.png" alt="Настройка системы - SEO URL" class="img-responsive" /></p>
+
+<p>Правильно отформатированный файл .htaccess должен находиться в корне установки OpenCart (рядом с папками admin и catalog). Содержимое файла .htaccess показано ниже:
+  <a role="button" class="btn btn-default btn-sm" data-toggle="collapse" href="#collapse-htaccess" aria-expanded="false" aria-controls="collapse-htaccess">Показать / Скрыть</a>
+</p>
+
+<div class="collapse in" id="collapse-htaccess">
+  <div class="well">
+    <code>
+      # 1. Чтобы использовать URL Alias, вам необходимо запускать Apache с включенным mod_rewrite.<br />
+      # 2. В каталоге вашего OpenCart переименуйте htaccess.txt в .htaccess.<br />
+      # Для получения поддержки, пожалуйста, посетите: https://www.opencart.com<br />
+      Options +FollowSymlinks<br />
+      # Предотвращение просмотра каталога<br />
+      Options -Indexes<br />
+      # Предотвращение прямого доступа к файлам<br />
+      &lt;FilesMatch &quot;\.(tpl|ini|log)&quot;&gt;<br />
+      &nbsp;Order deny,allow<br />
+      &nbsp;Deny from all<br />
+      &lt;/FilesMatch&gt;<br />
+      # Настройки SEO URL<br />
+      RewriteEngine On<br />
+      # Если ваша установка OpenCart не работает в основной веб-папке, убедитесь, что она работает в другой папке, например, / становится /shop/<br />
+      RewriteBase /<br />
+      RewriteRule ^sitemap.xml$ index.php?route=feed/google_sitemap [L]<br />
+      RewriteRule ^googlebase.xml$ index.php?route=feed/google_base [L]<br />
+      RewriteCond %{REQUEST_FILENAME} !-f<br />
+      RewriteCond %{REQUEST_FILENAME} !-d<br />
+      RewriteCond %{REQUEST_URI} !.*\.(ico|gif|jpg|jpeg|png|js|css)<br />
+      RewriteRule ^([^?]*) index.php?_route_=$1 [L,QSA]<br />
+      ### Дополнительные настройки, которые могут потребоваться для некоторых серверов<br />
+      ### Удалите символ # в начале строки, чтобы раскомментировать команды.<br />
+      ### Если вы получаете &quot;Ошибка сервера 500&quot; после включения любой из следующих настроек, восстановите #, так как это означает, что ваш хост не позволяет этого.<br />
+      # 1. Если ваша корзина позволяет добавлять только один товар за раз, возможно, включены register_globals. Попробуйте отключить это:<br />
+      # php_flag register_globals off<br />
+      # 2. Если у вас включены магические кавычки, возможно, отключение этого поможет:<br />
+      # php_flag magic_quotes_gpc Off<br />
+      # 3. Установите максимальный размер загружаемого файла. Большинство хостов ограничивают это и не позволяют переопределять, но вы можете попробовать<br />
+      # php_value upload_max_filesize 999M<br />
+      # 4. Установите максимальный размер POST-запроса. Удалите комментарий с этой строки, если у вас много вариантов продукта или возникают ошибки, когда формы не сохраняют все поля<br />
+      # php_value post_max_size 999M<br />
+      # 5. Установите максимальное время выполнения скрипта. Удалите комментарий с этой строки, если у вас много вариантов продукта или возникают ошибки, когда формы не сохраняют все поля<br />
+      # php_value max_execution_time 200<br />
+      # 6. Установите максимальное время для получения ввода. Удалите комментарий с этой строки, если у вас много вариантов продукта или возникают ошибки, когда формы не сохраняют все поля<br />
+      # php_value max_input_time 200<br />
+      # 7. Отключите ограничения open_basedir<br />
+      # php_admin_value open_basedir none
+    </code>
+
+  </div>
+</div>
+
+<p>Файл .htaccess.txt должен находиться в корневой папке вашего магазина. Если его нет, скопируйте и вставьте текст выше в текстовый редактор и сохраните его как &quot;.htaccess&quot;. Если файл .htaccess.txt присутствует, измените его имя на &quot;.htaccess&quot;. После изменения файла .htaccess вы сможете добавлять уникальные SEO-ключевые слова для отдельных продуктов, производителей, категорий и информационных страниц.</p>
+
+<p>SEO-ключевые слова, которые вы добавите, будут отображаться в URL страницы, поэтому они должны быть уникальными для каждого продукта, категории продукта и т. д. Давайте посмотрим, что произойдет, когда мы добавим SEO-ключевое слово &quot;nikon-camera&quot; для нашего продукта Nikon D300 на вкладке <a href="en-gb/administration/seo/">Данные</a>:</p>
+
+<p class="text-center"><img src="image/administration/admin-product-seo-url-example.png" alt="Продукт администратора - SEO Пример" class="img-responsive" /></p>
+
+<p>Если наш магазин находится по адресу &quot;www.mystore.com&quot;, новый URL страницы продукта Nikon D300 будет расположен по адресу &quot;www.mystore.com/nikon-d300&quot;. В целом, создание SEO-ключевых слов очистит URL вашей страницы магазина и оптимизирует вашу страницу для поисковых систем.</p>
+
+<div class="well">
+  <code>www.mystore.com/nikon-d300</code>
+</div>
+
+<p class="text-center"><img src="image/administration/store-front-seo-url-example.png" alt="Store front - SEO Example" class="img-responsive" /></p>
